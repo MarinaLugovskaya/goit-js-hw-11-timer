@@ -1,63 +1,52 @@
 import './sass/main.scss';
 
-class CountdownTimer {
-    constructor({ selector, targetDate }) {
-      this.timerId = null;
-      this.selector = selector;
-      this.targetDate = targetDate;
-  
-      this.start()
-        
-    };
-  
-    getRefs() {
-      return {
-        days: document.querySelector(
-          `${this.selector} [data-value="days"]`,
-        ),
-        hours: document.querySelector(
-          `${this.selector} [data-value="hours"]`,
-        ),
-        mins: document.querySelector(
-          `${this.selector} [data-value="mins"]`,
-        ),
-        secs: document.querySelector(`${this.selector} [data-value="secs"]`),
-      };
-    };
-  
-    pad(value) {
-      return String(value).padStart(2, '0');
-    };
-  
-  
-    start() {
-      this.timerId = setInterval(() => {
-        const time = this.targetDate - Date.now();
-        const { days, hours, mins, secs } = this.getRefs();
-  
-        days.textContent = this.pad(Math.floor(time / (1000 * 60 * 60 * 24)));
-  
-        hours.textContent = this.pad(Math.floor(
-          (time % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60),
-        ));
-  
-        mins.textContent = this.pad(Math.floor(
-          (time % (1000 * 60 * 60)) / (1000 * 60),
-        ));
-        
-        secs.textContent = this.pad(Math.floor((time % (1000 * 60)) / 1000));
-      }, 1000);
+  class CountdownTimer {
+    constructor({ selector, targetDate}) {        
+        this.selector = selector;
+        this.targetDate = targetDate;
+        this.refs = {
+            days: document.querySelector('[data-value="days"]'),
+            hours: document.querySelector('[data-value="hours"]'),
+            mins: document.querySelector('[data-value="mins"]'),
+            secs: document.querySelector('[data-value="secs"]'),
+        };
+
+        setInterval(() => {
+            const currentTime = Date.now();
+            const deltaTime = this.targetDate - Date.now();
+            
+            const { days, hours, mins, secs } = this.getTimeComponents(deltaTime);
+            this.updateClockface({ days, hours, mins, secs });
+                
+        }, 1000);
     }
-  };
-  
-    
-  
-  // Экземпляр
-  const countdownTimer = new CountdownTimer({
+
+    getTimeComponents(time) {
+    const days =  this.pad(Math.floor(time / (1000 * 60 * 60 * 24)));
+    const hours = this.pad(Math.floor((time % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)));
+    const mins =  this.pad(Math.floor((time % (1000 * 60 * 60)) / (1000 * 60)));
+    const secs =  this.pad(Math.floor((time % (1000 * 60)) / 1000));
+
+    return { days, hours, mins, secs };
+    }
+
+    pad(value) {
+    return String(value).padStart(2, '0');
+    }
+
+    updateClockface({ days, hours, mins, secs }) {
+    this.refs.days.textContent = `${days}`;
+    this.refs.hours.textContent = `${hours}`;
+    this.refs.mins.textContent = `${mins}`;
+    this.refs.secs.textContent = `${secs}`; 
+}
+};
+
+
+new CountdownTimer({
     selector: '#timer-1',
-    targetDate: new Date('Jul 17, 2022'),
-  
-  });
+    targetDate: new Date('Jul 15, 2022'),    
+});
 
 
 // const refs = {
